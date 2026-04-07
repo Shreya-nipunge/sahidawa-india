@@ -1,0 +1,60 @@
+name: 🌏 Language Translation
+description: Claim a language from the 22 Indian scheduled languages to translate for SahiDawa.
+title: "[I18N] Translation for <Language Name>"
+labels: ["translation", "good first issue"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for helping SahiDawa become accessible to all Indians! 🇮🇳
+        Please verify in the `README.md` that the language you want to translate is currently `🔜 Open`.
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Which Indian language do you want to translate?
+      description: Select from the remaining open languages.
+      options:
+        - "Hindi (हिन्दी)"
+        - "Tamil (தமிழ்)"
+        - "Telugu (తెలుగు)"
+        - "Kannada (ಕನ್ನಡ)"
+        - "Malayalam (മലയാളം)"
+        - "Bengali (বাংলা)"
+        - "Gujarati (ગુજરાતી)"
+        - "Marathi (मराठी)"
+        - "Punjabi (ਪੰਜਾਬੀ)"
+        - "Odia (ଓଡ଼ିଆ)"
+        - "Assamese (অসমীয়া)"
+        - "Urdu (اردو)"
+        - "Sanskrit (संस्कृत)"
+        - "Other (Maithili, Kashmiri, Konkani, Sindhi, Dogri, Bodo, Manipuri, Santali)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: experience
+    attributes:
+      label: Proficiency
+      description: Are you a native speaker or fluent in this language?
+      placeholder: "I am a native speaker from..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: gssoc
+    attributes:
+      label: GSSoC 2026 Participation
+      options:
+        - label: I am participating in GirlScript Summer of Code 2026 and would like to claim this issue!
+          required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I have read and agree to SahiDawa's [Code of Conduct](https://github.com/RatLoopz/sahidawa-india/blob/main/CODE_OF_CONDUCT.md).
+          required: true

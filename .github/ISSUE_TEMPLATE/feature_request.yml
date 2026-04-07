@@ -1,0 +1,70 @@
+name: ✨ Feature Request
+description: Suggest an idea or new feature to improve SahiDawa.
+title: "[FEATURE] <Brief description of the feature>"
+labels: ["enhancement", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for your suggestion! 🚀
+        SahiDawa is built by the community. Please describe your idea clearly so we can discuss it!
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Which component does this feature relate to?
+      description: Select the part of the SahiDawa ecosystem this feature belongs to.
+      options:
+        - "Frontend (Next.js/UI)"
+        - "Backend API (Node.js)"
+        - "ML/AI Assistant (Python)"
+        - "Medicine Scanner"
+        - "Maps & Location"
+        - "Other / General"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem? Please describe.
+      description: A clear and concise description of what the problem is.
+      placeholder: "I'm always frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen.
+      placeholder: "I'd like to see a heatmap visualization of..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: A clear and concise description of any alternative solutions or features you've considered.
+      placeholder: "We could alternatively use..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: gssoc
+    attributes:
+      label: GSSoC 2026 Participation
+      options:
+        - label: I am participating in GirlScript Summer of Code 2026 and would like to work on this feature!
+          required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I have read and agree to SahiDawa's [Code of Conduct](https://github.com/RatLoopz/sahidawa-india/blob/main/CODE_OF_CONDUCT.md).
+          required: true
