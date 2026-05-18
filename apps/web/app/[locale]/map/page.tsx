@@ -126,18 +126,19 @@ function toPharmacy(op: OverpassPharmacy & { _distanceFormatted?: string }): Pha
 
 // ── Verified pharmacy adapter ────────────────────────────────────────────────
 function toVerifiedPharmacy(vp: VerifiedPharmacy, id: number): Pharmacy {
+    const verified = vp.is_verified === true;
     return {
         id,
         name: vp.name,
         distance: vp.distance,
         distanceKm: parseFloat(vp.distance) || undefined,
         rating: 0,
-        status: "Verified Safe Store",
-        type: "govt",
+        status: verified ? "Verified Safe Store" : "Unverified Partner",
+        type: verified ? "govt" : "private",
         coordinates: { lat: vp.lat, lng: vp.lng },
         address: vp.address,
         phone: vp.phone_number || undefined,
-        isVerified: vp.is_verified !== false,
+        isVerified: verified,
     };
 }
 
@@ -409,15 +410,19 @@ export default function PharmacyMapPage() {
                 return (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity);
             });
 
-            if (merged.length === 0 && osmResult.status === "rejected") {
-                setFetchError("Could not load pharmacies. Try again.");
+            if (osmResult.status === "rejected") {
+                setFetchError("Live search temporarily offline. Showing verified partners only.");
+                setTimeout(() => setFetchError(null), 6000);
+            } else if (merged.length === 0) {
+                setFetchError("No pharmacies found in this area. Try searching a wider region.");
                 setTimeout(() => setFetchError(null), 5000);
             }
 
             setPharmacies(merged);
             setPharmacyCount(merged.length);
             initialFetchDone.current = true;
-        } catch {
+        } catch (err) {
+            console.error("Critical error in pharmacy rendering:", err);
             setFetchError("Could not load pharmacies. Try again.");
             setTimeout(() => setFetchError(null), 5000);
         } finally {
@@ -452,14 +457,18 @@ export default function PharmacyMapPage() {
                 return (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity);
             });
 
-            if (merged.length === 0 && osmResult.status === "rejected") {
-                setFetchError("Could not load pharmacies. Try again.");
+            if (osmResult.status === "rejected") {
+                setFetchError("Live search temporarily offline. Showing verified partners only.");
+                setTimeout(() => setFetchError(null), 6000);
+            } else if (merged.length === 0) {
+                setFetchError("No pharmacies found in this area. Try searching a wider region.");
                 setTimeout(() => setFetchError(null), 5000);
             }
 
             setPharmacies(merged);
             setPharmacyCount(merged.length);
-        } catch {
+        } catch (err) {
+            console.error("Critical error in bound pharmacy rendering:", err);
             setFetchError("Could not load pharmacies. Try again.");
             setTimeout(() => setFetchError(null), 5000);
         } finally {

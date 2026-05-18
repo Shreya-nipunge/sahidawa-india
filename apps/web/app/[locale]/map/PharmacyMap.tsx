@@ -342,7 +342,7 @@ export default function PharmacyMap({
             // Rich popup matching SahiDawa's design
             const statusColor = isVerified
                 ? "background:#d1fae5;color:#065f46"
-                : pharmacy.status === "Verified"
+                : pharmacy.status === "Verified" || pharmacy.status === "Govt. Verified"
                   ? "background:#d1fae5;color:#065f46"
                   : "background:#fef3c7;color:#92400e";
 
