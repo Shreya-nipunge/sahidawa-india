@@ -137,7 +137,7 @@ function toVerifiedPharmacy(vp: VerifiedPharmacy, id: number): Pharmacy {
         coordinates: { lat: vp.lat, lng: vp.lng },
         address: vp.address,
         phone: vp.phone_number || undefined,
-        isVerified: true,
+        isVerified: vp.is_verified !== false,
     };
 }
 
@@ -408,6 +408,12 @@ export default function PharmacyMapPage() {
                 if (a.isVerified !== b.isVerified) return a.isVerified ? -1 : 1;
                 return (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity);
             });
+
+            if (merged.length === 0 && osmResult.status === "rejected") {
+                setFetchError("Could not load pharmacies. Try again.");
+                setTimeout(() => setFetchError(null), 5000);
+            }
+
             setPharmacies(merged);
             setPharmacyCount(merged.length);
             initialFetchDone.current = true;
@@ -445,6 +451,12 @@ export default function PharmacyMapPage() {
                 if (a.isVerified !== b.isVerified) return a.isVerified ? -1 : 1;
                 return (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity);
             });
+
+            if (merged.length === 0 && osmResult.status === "rejected") {
+                setFetchError("Could not load pharmacies. Try again.");
+                setTimeout(() => setFetchError(null), 5000);
+            }
+
             setPharmacies(merged);
             setPharmacyCount(merged.length);
         } catch {
