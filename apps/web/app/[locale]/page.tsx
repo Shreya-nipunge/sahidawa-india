@@ -51,7 +51,8 @@ function formatRelativeTime(dateString: string | null): string {
 export default function SahiDawaHome() {
     const router = useRouter();
     const params = useParams();
-    const locale = params.locale;
+    // const locale = params.locale;
+    const locale = Array.isArray(params.locale) ? params.locale[0] : params.locale;
     const tHome = useTranslations("Home");
     const tNav = useTranslations("Navigation");
 
