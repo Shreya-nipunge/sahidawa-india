@@ -20,12 +20,10 @@ import {
 import { Link } from "@/i18n/routing";
 import { PageHeader } from "../components/PageHeader";
 import { toast } from "sonner";
-import Footer from "../components/Footer";
 import { ExpiryBadge } from "@/components/scanner/ExpiryBadge";
 import {
     submitReport,
     verifyMedicine,
-
     fuzzyMatchBrand,
     verifyMedicineByBrand,
     checkLasaConflicts,
@@ -107,14 +105,6 @@ function LoadingSkeleton({ ocrStatus, ocrProgress }: { ocrStatus: string; ocrPro
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6 backdrop-blur-md">
-            {showLasaConfirmation && lasaMatches.length > 0 && pendingVerifyResult && (
-                <LasaConfirmation
-                    matches={lasaMatches}
-                    scannedName={pendingVerifyResult.medicine?.brand_name || parsedBrand}
-                    onConfirmScanned={handleConfirmScanned}
-                    onSelectConflict={handleSelectConflict}
-                />
-            )}
             <div className="relative w-full max-w-sm overflow-hidden rounded-[2.5rem] bg-white p-8 text-slate-900 shadow-2xl">
                 <Skeleton className="absolute top-0 right-0 left-0 h-2 rounded-none bg-emerald-500" />
                 <div className="flex flex-col items-center space-y-4 text-center">
@@ -517,7 +507,7 @@ export default function ScanPage() {
         setPendingVerifyResult(null);
         setIsScanning(true);
         setShowResult(false);
-        
+
         try {
             const brandRes = await verifyMedicineByBrand(conflictName);
             setParsedBrand(conflictName);
@@ -749,12 +739,17 @@ export default function ScanPage() {
                 if (parsedExpiryStr) {
                     updatedMedicine.expiry_date = expiryToIso(parsedExpiryStr);
                 }
-                await processVerificationResult({ verified: true, medicine: updatedMedicine }, parsedBrand);
+                await processVerificationResult(
+                    { verified: true, medicine: updatedMedicine },
+                    parsedBrand
+                );
             } else {
-                setVerifyResult(finalResult || {
-                    verified: false,
-                    message: "No match found in CDSCO Database",
-                });
+                setVerifyResult(
+                    finalResult || {
+                        verified: false,
+                        message: "No match found in CDSCO Database",
+                    }
+                );
             }
         } catch (err) {
             if (ocrCancelledRef.current) return;
@@ -926,7 +921,11 @@ export default function ScanPage() {
                     <div className="animate-in fade-in zoom-in absolute inset-0 z-30 flex items-center justify-center bg-black/60 p-6 backdrop-blur-sm duration-300">
                         {showLasaConfirmation ? (
                             <LasaConfirmation
-                                scannedName={pendingVerifyResult?.verified ? pendingVerifyResult.medicine.brand_name : parsedBrand}
+                                scannedName={
+                                    pendingVerifyResult?.verified
+                                        ? pendingVerifyResult.medicine.brand_name
+                                        : parsedBrand
+                                }
                                 matches={lasaMatches}
                                 onConfirmScanned={handleConfirmScanned}
                                 onSelectConflict={handleSelectConflict}
@@ -940,7 +939,10 @@ export default function ScanPage() {
                                     <X size={24} />
                                 </button>
                                 {verifyError && (
-                                    <ErrorResult message={verifyError} onRetry={handleDismissResult} />
+                                    <ErrorResult
+                                        message={verifyError}
+                                        onRetry={handleDismissResult}
+                                    />
                                 )}
                                 {!verifyError &&
                                     verifyResult?.verified &&
@@ -1049,7 +1051,6 @@ export default function ScanPage() {
                     </label>
                 </div>
             </div>
-            <Footer />
         </div>
     );
 }
