@@ -53,3 +53,4 @@
 | [#834](https://github.com/RatLoopz/sahidawa-india/pull/834) | 2026-05-29 | Frontend | 16 | @Suyash2527 | [View Doc](devtrack/2026-05/PR-834-fix-admin-dashboard-auth.md) / [ADR](devtrack/adr/ADR-013-fix-admin-dashboard-auth.md) |
 | [#821](https://github.com/RatLoopz/sahidawa-india/pull/821) | 2026-05-29 | Frontend | 10 | @himanithakre56 | [View Doc](devtrack/2026-05/PR-821-i18n-localize-offline-page-and-banner-using-next-i.md) |
 | [#786](https://github.com/RatLoopz/sahidawa-india/pull/786) | 2026-05-29 | Frontend | 10 | @Christina1507 | [View Doc](devtrack/2026-05/PR-786-improve-language-switcher-accessibility-and-ux.md) |
+| [#845](https://github.com/RatLoopz/sahidawa-india/pull/845) | 2026-05-29 | ML/AI | 53 | @saurabhhhcodes | [View Doc](devtrack/2026-05/PR-845-feat-ml-connect-medicine-image-analysis.md) / [ADR](devtrack/adr/ADR-013-feat-ml-connect-medicine-image-analysis.md) |
