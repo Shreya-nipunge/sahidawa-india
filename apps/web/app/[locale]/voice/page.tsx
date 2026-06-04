@@ -51,6 +51,7 @@ import {
     subscribeToMediaQueryChange,
     type StoredVoiceAnimationPreference,
 } from "./lib/audio";
+import { useCloudTTS, type TTSError } from "./lib/useCloudTTS";
 import type { VoiceErrorState, VoiceStep, VoiceStreamingStatus, VoiceTriageResult } from "./types";
 
 const DEFAULT_FLOW_CONFIDENCE = getConfidenceMeta(undefined);
@@ -648,49 +649,81 @@ export default function VoiceTriagePage() {
         }
     }
 
+    const { playTTS, stopTTS } = useCloudTTS();
+
     function handleReplaySummary() {
         if (typeof window === "undefined" || !result?.summary) {
             return;
         }
 
-        if (!supportsSpeechSynthesis(window)) {
-            toast.error(t("tts_not_supported"));
-            return;
-        }
+        setIsSpeaking(true);
 
-        stopSpeaking(window);
-
-        const utterance = new SpeechSynthesisUtterance(result.summary);
-        utterance.lang = resultLanguageOption.speechSynthesisLang;
-        const voiceMatch = resolveSpeechSynthesisVoice(
-            window,
-            resultLanguageOption.speechSynthesisLang
-        );
-
-        if (voiceMatch.voice) {
-            utterance.voice = voiceMatch.voice;
-        }
-
-        if (voiceMatch.supportLevel === "fallback") {
-            const fallbackNoticeKey = `${resultLanguageOption.value}:${result.summary}`;
-            if (ttsFallbackNoticeKeyRef.current !== fallbackNoticeKey) {
-                ttsFallbackNoticeKeyRef.current = fallbackNoticeKey;
-                toast.warning(
-                    t("tts_fallback_message", {
-                        language: resultLanguageOption.label,
-                    })
-                );
+        const playWithCloudTTSAndFallback = async () => {
+            try {
+                // Try cloud TTS first
+                await playTTS(result!.summary, resultLanguageOption.speechSynthesisLang, {
+                    onStart: () => setIsSpeaking(true),
+                    onEnd: () => setIsSpeaking(false),
+                    onError: (error: Error) => {
+                        console.error("Cloud TTS error:", error);
+                        // Fallback to native SpeechSynthesis
+                        fallbackToNativeSpeech();
+                    },
+                });
+            } catch (error) {
+                const ttsError = error as TTSError;
+                console.warn("Cloud TTS failed, falling back to native SpeechSynthesis:", ttsError);
+                // Fallback to native SpeechSynthesis
+                fallbackToNativeSpeech();
             }
-        }
+        };
 
-        utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-        utterance.onerror = () => setIsSpeaking(false);
+        const fallbackToNativeSpeech = () => {
+            if (!supportsSpeechSynthesis(window)) {
+                toast.error(t("tts_not_supported"));
+                setIsSpeaking(false);
+                return;
+            }
 
-        window.speechSynthesis.speak(utterance);
+            stopSpeaking(window);
+
+            const utterance = new SpeechSynthesisUtterance(result!.summary);
+            utterance.lang = resultLanguageOption.speechSynthesisLang;
+            const voiceMatch = resolveSpeechSynthesisVoice(
+                window,
+                resultLanguageOption.speechSynthesisLang
+            );
+
+            if (voiceMatch.voice) {
+                utterance.voice = voiceMatch.voice;
+            }
+
+            if (voiceMatch.supportLevel === "fallback") {
+                const fallbackNoticeKey = `${resultLanguageOption.value}:${result!.summary}`;
+                if (ttsFallbackNoticeKeyRef.current !== fallbackNoticeKey) {
+                    ttsFallbackNoticeKeyRef.current = fallbackNoticeKey;
+                    toast.warning(
+                        t("tts_fallback_message", {
+                            language: resultLanguageOption.label,
+                        })
+                    );
+                }
+            }
+
+            utterance.onstart = () => setIsSpeaking(true);
+            utterance.onend = () => setIsSpeaking(false);
+            utterance.onerror = () => setIsSpeaking(false);
+
+            window.speechSynthesis.speak(utterance);
+        };
+
+        playWithCloudTTSAndFallback();
     }
 
     function handleStopSpeaking() {
+        // Stop cloud TTS
+        stopTTS();
+        // Stop native SpeechSynthesis as fallback
         if (typeof window !== "undefined") {
             stopSpeaking(window);
         }
