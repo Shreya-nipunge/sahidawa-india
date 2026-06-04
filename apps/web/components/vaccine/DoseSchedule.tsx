@@ -53,7 +53,7 @@ export function DoseSchedule({ vaccine, initialDate }: DoseScheduleProps) {
         <div className="space-y-4">
             <div className="flex items-center gap-2">
                 <Calendar size={20} className="text-emerald-600" aria-hidden="true" />
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                <h3 className="text-lg font-bold text-(--color-text-primary)">
                     Immunization Schedule
                 </h3>
             </div>
@@ -98,7 +98,7 @@ export function DoseSchedule({ vaccine, initialDate }: DoseScheduleProps) {
                                             ? "border-2 border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100"
                                             : status === "scheduled"
                                               ? "border-2 border-sky-400 bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-100"
-                                              : "border-2 border-slate-300 bg-slate-100 text-slate-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300"
+                                              : "border-2 border-slate-300 bg-slate-100 text-(--color-text-secondary) dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300"
                                     }`}
                                 >
                                     {index + 1}
@@ -109,7 +109,7 @@ export function DoseSchedule({ vaccine, initialDate }: DoseScheduleProps) {
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-start justify-between gap-2">
                                     <div className="min-w-0 flex-1">
-                                        <p className="font-semibold text-slate-900 dark:text-white">
+                                        <p className="font-semibold text-(--color-text-primary)">
                                             {label}
                                         </p>
 
@@ -146,7 +146,7 @@ export function DoseSchedule({ vaccine, initialDate }: DoseScheduleProps) {
                                                 </span>
                                             </p>
                                         ) : (
-                                            <p className="mt-1 text-sm text-slate-500 italic dark:text-slate-400">
+                                            <p className="mt-1 text-sm text-(--color-text-muted) italic dark:text-slate-400">
                                                 Enter a date above to calculate this dose date
                                             </p>
                                         )}
@@ -159,12 +159,12 @@ export function DoseSchedule({ vaccine, initialDate }: DoseScheduleProps) {
             </div>
 
             {/* Timeline Summary */}
-            <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
-                <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Summary</h4>
-                <dl className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+            <div className="mt-6 rounded-lg border border-slate-200 bg-(--color-surface-muted) p-4 dark:border-slate-700 dark:bg-slate-900">
+                <h4 className="text-sm font-semibold text-(--color-text-primary)">Summary</h4>
+                <dl className="mt-3 space-y-2 text-sm text-(--color-text-secondary)">
                     <div className="flex justify-between">
                         <dt className="font-medium">Total Doses:</dt>
-                        <dd className="font-semibold text-slate-900 dark:text-white">
+                        <dd className="font-semibold text-(--color-text-primary)">
                             {vaccine.total_doses}
                         </dd>
                     </div>
@@ -176,7 +176,7 @@ export function DoseSchedule({ vaccine, initialDate }: DoseScheduleProps) {
                     </div>
                     <div className="flex justify-between">
                         <dt className="font-medium">Category:</dt>
-                        <dd className="font-semibold text-slate-900 dark:text-white">
+                        <dd className="font-semibold text-(--color-text-primary)">
                             {vaccine.category}
                         </dd>
                     </div>

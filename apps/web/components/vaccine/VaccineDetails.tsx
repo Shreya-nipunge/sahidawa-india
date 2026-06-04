@@ -21,7 +21,7 @@ export function VaccineDetails({ vaccine }: VaccineDetailsProps) {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <h2 className="text-2xl font-bold text-(--color-text-primary)">
                     {vaccine.disease_name}
                 </h2>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -38,7 +38,7 @@ export function VaccineDetails({ vaccine }: VaccineDetailsProps) {
 
             {/* Target Groups */}
             <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                <h3 className="flex items-center gap-2 text-sm font-bold tracking-wide text-slate-900 uppercase dark:text-white">
+                <h3 className="flex items-center gap-2 text-sm font-bold tracking-wide text-(--color-text-primary) uppercase dark:text-white">
                     <span className="text-lg" aria-hidden="true">
                         👥
                     </span>
@@ -74,8 +74,8 @@ export function VaccineDetails({ vaccine }: VaccineDetailsProps) {
             </div>
 
             {/* Disease Summary */}
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800">
-                <h3 className="flex items-center gap-2 text-sm font-bold tracking-wide text-slate-900 uppercase dark:text-white">
+            <div className="rounded-lg border border-slate-200 bg-(--color-surface-muted) p-4 dark:border-slate-700 dark:bg-slate-800">
+                <h3 className="flex items-center gap-2 text-sm font-bold tracking-wide text-(--color-text-primary) uppercase dark:text-white">
                     <Info size={16} aria-hidden="true" />
                     About This Disease
                 </h3>
@@ -86,7 +86,7 @@ export function VaccineDetails({ vaccine }: VaccineDetailsProps) {
 
             {/* Key Information Card */}
             <div className="rounded-lg border border-l-4 border-slate-200 border-l-emerald-500 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                <p className="text-xs font-bold tracking-wide text-slate-600 uppercase dark:text-slate-400">
+                <p className="text-xs font-bold tracking-wide text-(--color-text-secondary) uppercase dark:text-slate-400">
                     📌 Quick Fact
                 </p>
                 <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-300">

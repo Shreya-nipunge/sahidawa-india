@@ -82,7 +82,7 @@ export function VaccineSelector({
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 disabled={disabled}
-                className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-left font-medium text-slate-900 shadow-sm transition-all hover:bg-slate-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-left font-medium text-(--color-text-primary) shadow-sm transition-all hover:bg-(--color-surface-muted) focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
                 aria-label="Select a vaccine"
@@ -95,7 +95,7 @@ export function VaccineSelector({
                                 <p className="text-sm font-semibold">
                                     {selectedVaccine.disease_name}
                                 </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                <p className="text-xs text-(--color-text-muted)">
                                     {selectedVaccine.vaccine_name}
                                 </p>
                             </div>
@@ -127,7 +127,7 @@ export function VaccineSelector({
                                 placeholder="Search vaccines or diseases..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full rounded-md border border-slate-300 bg-slate-50 py-2 pr-3 pl-9 text-sm placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+                                className="w-full rounded-md border border-slate-300 bg-(--color-surface-muted) py-2 pr-3 pl-9 text-sm placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
                                 aria-label="Search vaccines"
                             />
                         </div>
@@ -176,7 +176,7 @@ export function VaccineSelector({
                                 </div>
                             ))
                         ) : (
-                            <div className="px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                            <div className="px-4 py-6 text-center text-sm text-(--color-text-muted)">
                                 No vaccines found matching "{searchQuery}"
                             </div>
                         )}

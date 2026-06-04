@@ -10,7 +10,7 @@ interface SafetyInfoProps {
 export function SafetyInfo({ vaccine }: SafetyInfoProps) {
     return (
         <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
+            <h3 className="flex items-center gap-2 text-lg font-bold text-(--color-text-primary)">
                 <span aria-hidden="true">⚠️</span>
                 Safety & Side Effects
             </h3>

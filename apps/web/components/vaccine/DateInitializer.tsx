@@ -21,7 +21,7 @@ export function DateInitializer({ vaccine, value, onChange }: DateInitializerPro
                 type="date"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 font-medium text-slate-900 shadow-sm transition-all outline-none hover:bg-slate-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 font-medium text-(--color-text-primary) shadow-sm transition-all outline-none hover:bg-(--color-surface-muted) focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 aria-label={
                     vaccine.is_relative_to_birth
                         ? "Enter child's birth date"
@@ -31,7 +31,7 @@ export function DateInitializer({ vaccine, value, onChange }: DateInitializerPro
             />
 
             {value && (
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-(--color-text-muted)">
                     📅{" "}
                     {new Date(value).toLocaleDateString("en-IN", {
                         weekday: "long",

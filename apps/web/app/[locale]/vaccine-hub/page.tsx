@@ -12,7 +12,7 @@ import {
     DateInitializer,
 } from "@/components/vaccine";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Syringe, Calendar, AlertTriangle, HeartPulse } from "lucide-react";
 
 const STORAGE_KEYS = {
     selectedVaccine: "vaccine-hub-selected-vaccine",
@@ -73,10 +73,10 @@ export default function VaccineHubPage() {
                     backHref="/"
                     variant="light"
                 />
-                <div className="min-h-screen bg-slate-50 p-6 md:p-10 dark:bg-slate-900">
+                <div className="min-h-screen bg-(--color-surface-muted) p-6 md:p-10 dark:bg-slate-900">
                     <div className="mx-auto max-w-6xl animate-pulse space-y-6">
-                        <div className="h-32 rounded-lg bg-slate-200 dark:bg-slate-700" />
-                        <div className="h-64 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                        <div className="h-32 rounded-lg bg-(--color-border-muted)" />
+                        <div className="h-64 rounded-lg bg-(--color-border-muted)" />
                     </div>
                 </div>
             </>
@@ -92,14 +92,15 @@ export default function VaccineHubPage() {
                 variant="light"
             />
 
-            <div className="min-h-screen bg-slate-50 p-4 transition-colors duration-200 sm:p-6 md:p-10 dark:bg-slate-900">
+            <div className="min-h-screen bg-(--color-surface-muted) p-4 transition-colors duration-200 sm:p-6 md:p-10 dark:bg-slate-900">
                 <div className="mx-auto max-w-7xl space-y-8">
                     {/* Hero Section */}
                     <div className="space-y-2 text-center">
-                        <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl dark:text-white">
-                            💉 Vaccine Hub & Immunization Tracker
+                        <h1 className="text-3xl font-bold text-(--color-text-primary) sm:text-4xl dark:text-white">
+                            <Syringe className="mr-2 inline h-8 w-8 shrink-0 text-emerald-600" />{" "}
+                            Vaccine Hub & Immunization Tracker
                         </h1>
-                        <p className="mx-auto max-w-2xl text-slate-600 dark:text-slate-300">
+                        <p className="mx-auto max-w-2xl text-(--color-text-secondary)">
                             Explore vaccine schedules, safety information, and aftercare guidance
                             for better public health awareness.
                         </p>
@@ -137,29 +138,35 @@ export default function VaccineHubPage() {
 
                             <div className="mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-3">
                                 <div className="rounded-lg border border-slate-200 bg-white p-4 text-center dark:border-slate-700 dark:bg-slate-800">
-                                    <p className="mb-2 text-2xl">📅</p>
-                                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                                    <div className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50">
+                                        <Calendar className="h-6 w-6 text-emerald-700" />
+                                    </div>
+                                    <p className="text-sm font-semibold text-(--color-text-primary)">
                                         Schedule Tracking
                                     </p>
-                                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                                    <p className="mt-1 text-xs text-(--color-text-secondary)">
                                         Calculate projected doses
                                     </p>
                                 </div>
                                 <div className="rounded-lg border border-slate-200 bg-white p-4 text-center dark:border-slate-700 dark:bg-slate-800">
-                                    <p className="mb-2 text-2xl">⚠️</p>
-                                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                                    <div className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-amber-50">
+                                        <AlertTriangle className="h-6 w-6 text-amber-600" />
+                                    </div>
+                                    <p className="text-sm font-semibold text-(--color-text-primary)">
                                         Safety Info
                                     </p>
-                                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                                    <p className="mt-1 text-xs text-(--color-text-secondary)">
                                         Common & severe reactions
                                     </p>
                                 </div>
                                 <div className="rounded-lg border border-slate-200 bg-white p-4 text-center dark:border-slate-700 dark:bg-slate-800">
-                                    <p className="mb-2 text-2xl">🩹</p>
-                                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                                    <div className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-sky-50">
+                                        <HeartPulse className="h-6 w-6 text-sky-600" />
+                                    </div>
+                                    <p className="text-sm font-semibold text-(--color-text-primary)">
                                         Aftercare
                                     </p>
-                                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                                    <p className="mt-1 text-xs text-(--color-text-secondary)">
                                         Step-by-step guidance
                                     </p>
                                 </div>
@@ -198,7 +205,7 @@ export default function VaccineHubPage() {
 
                                 {/* Disclaimer */}
                                 <div className="border-t border-slate-200 pt-6 text-center dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 italic dark:text-slate-400">
+                                    <p className="text-xs text-(--color-text-muted) italic dark:text-slate-400">
                                         {VACCINE_GLOBAL_DISCLAIMER}
                                     </p>
                                 </div>

@@ -10,7 +10,7 @@ interface AftercareGuidanceProps {
 export function AftercareGuidance({ vaccine }: AftercareGuidanceProps) {
     return (
         <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
+            <h3 className="flex items-center gap-2 text-lg font-bold text-(--color-text-primary)">
                 <span aria-hidden="true">🩹</span>
                 Post-Vaccination Care
             </h3>
@@ -28,7 +28,7 @@ export function AftercareGuidance({ vaccine }: AftercareGuidanceProps) {
 
             {/* General Care Tips */}
             <div className="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
-                <h4 className="mb-3 text-sm font-bold tracking-wide text-slate-900 uppercase dark:text-white">
+                <h4 className="mb-3 text-sm font-bold tracking-wide text-(--color-text-primary) uppercase dark:text-white">
                     General Care Guidelines
                 </h4>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -37,7 +37,7 @@ export function AftercareGuidance({ vaccine }: AftercareGuidanceProps) {
                             <span aria-hidden="true">✓</span>
                             Do
                         </h5>
-                        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                        <ul className="space-y-2 text-sm text-(--color-text-secondary)">
                             <li className="flex items-start gap-2">
                                 <span aria-hidden="true">•</span>
                                 <span>Keep the injection site clean and dry</span>
@@ -66,7 +66,7 @@ export function AftercareGuidance({ vaccine }: AftercareGuidanceProps) {
                             <span aria-hidden="true">✗</span>
                             Avoid
                         </h5>
-                        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                        <ul className="space-y-2 text-sm text-(--color-text-secondary)">
                             <li className="flex items-start gap-2">
                                 <span aria-hidden="true">•</span>
                                 <span>Strenuous exercise or heavy lifting (24–48 hours)</span>
