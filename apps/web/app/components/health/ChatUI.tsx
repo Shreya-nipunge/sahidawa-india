@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { ChatBubble, type Message } from "./components/ChatBubble";
 import { ActionCard } from "./components/ActionCard";
 import { TypingIndicator } from "./components/TypingIndicator";
 import { TrustBar } from "./components/TrustBar";
-import { Camera, Pill, MapPin } from "lucide-react";
+import { Camera, Pill, MapPin, Home  } from "lucide-react";
 import { isAbortError, readChatErrorMessage, readTextResponseStream } from "@/lib/chatStream";
 
 const genId = () => Math.random().toString(36).slice(2, 10);
@@ -354,15 +356,30 @@ export default function ChatUI() {
             {/* Floating Header */}
             <header className="absolute top-4 right-4 left-4 z-20 mx-auto max-w-3xl rounded-3xl border border-white/30 bg-white/60 px-5 py-4 shadow-[0_8px_30px_rgb(0,0,0,0.08)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/60 dark:shadow-black/50">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-baseline gap-2">
-                        <h1 className="text-xl font-semibold text-slate-800 dark:text-white">
-                            SahiDawa
-                        </h1>
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">
-                            CDSCO
-                        </span>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/"
+                            className="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                            aria-label="Go to homepage"
+                        >
+                            <Home size={18} />
+                        </Link>
+
+                        <div className="flex items-baseline gap-2">
+                            <h1 className="text-xl font-semibold text-slate-800 dark:text-white">
+                                SahiDawa
+                            </h1>
+
+                            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">
+                                CDSCO
+                            </span>
+                        </div>
                     </div>
-                    <TrustBar />
+
+                    <div className="flex items-center gap-3">
+                        <TrustBar />
+                        <ThemeToggle />
+                    </div>
                 </div>
             </header>
 
