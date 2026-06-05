@@ -383,11 +383,12 @@ def send_to_make_webhook(post_text: str, pr: dict) -> None:
     import urllib.parse
     
     # Generate a dynamic Thank You banner image URL
-    banner_text = f"Huge thanks to **{pr['author']}** for their contribution to SahiDawa! 🚀 #GSSoC2026"
-    encoded_text = urllib.parse.quote(banner_text)
-    image_url = f"https://og-image.vercel.app/{encoded_text}.png?theme=dark&md=1&fontSize=75px"
+    # We do NOT urlencode the text here because Make.com/LinkedIn double-encodes it.
+    # We also remove the '#' character to prevent Make.com from treating it as a URL fragment and dropping the .png extension.
+    banner_text = f"Huge thanks to {pr['author']} for their contribution to SahiDawa! 🚀"
+    image_url = f"https://og-image.vercel.app/{banner_text}.png?theme=dark&md=1&fontSize=75px"
     if pr.get("author_avatar"):
-        image_url += f"&images={urllib.parse.quote(pr['author_avatar'])}"
+        image_url += f"&images={pr['author_avatar']}"
 
     payload = {
         "post_text": post_text,
