@@ -207,3 +207,60 @@ export async function invalidateDrugCache(drugIds: string[]): Promise<void> {
         logger.error("Error invalidating cache", err);
     }
 }
+
+/**
+ * Returns cache performance stats: hit/miss counts, tier breakdown, top drugs.
+ */
+export async function getCacheStats(): Promise<{
+    hits: number;
+    misses: number;
+    hitRate: number;
+    tierBreakdown: { hot: number; warm: number; cold: number };
+    topDrugs: { name: string; count: number }[];
+}> {
+    if (!redisClient.isOpen) {
+        return {
+            hits: 0,
+            misses: 0,
+            hitRate: 0,
+            tierBreakdown: { hot: 0, warm: 0, cold: 0 },
+            topDrugs: [],
+        };
+    }
+    try {
+        const hits = parseInt((await redisClient.get("stats:hits")) ?? "0", 10);
+        const misses = parseInt((await redisClient.get("stats:misses")) ?? "0", 10);
+        const total = hits + misses;
+        const hitRate = total > 0 ? Math.round((hits / total) * 100) : 0;
+
+        const hotHits = parseInt((await redisClient.get("stats:tier:hot")) ?? "0", 10);
+        const warmHits = parseInt((await redisClient.get("stats:tier:warm")) ?? "0", 10);
+        const coldHits = parseInt((await redisClient.get("stats:tier:cold")) ?? "0", 10);
+
+        // Read hit-frequency from existing hits:drug: keys
+        const freqKeys = await redisClient.keys(`${KEY_PREFIXES.DRUG_HITS}*`);
+        const topDrugs: { name: string; count: number }[] = [];
+        for (const key of freqKeys.slice(0, 20)) {
+            const count = parseInt((await redisClient.get(key)) ?? "0", 10);
+            topDrugs.push({ name: key.replace(KEY_PREFIXES.DRUG_HITS, ""), count });
+        }
+        topDrugs.sort((a, b) => b.count - a.count);
+
+        return {
+            hits,
+            misses,
+            hitRate,
+            tierBreakdown: { hot: hotHits, warm: warmHits, cold: coldHits },
+            topDrugs: topDrugs.slice(0, 10),
+        };
+    } catch (err) {
+        logger.error("Error fetching cache stats", err);
+        return {
+            hits: 0,
+            misses: 0,
+            hitRate: 0,
+            tierBreakdown: { hot: 0, warm: 0, cold: 0 },
+            topDrugs: [],
+        };
+    }
+}
