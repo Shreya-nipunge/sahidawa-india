@@ -197,8 +197,7 @@ export default function ExpiryTrackerPage() {
             const registration = await navigator.serviceWorker.getRegistration();
             if (registration) {
                 try {
-                    // @ts-expect-error: includeTriggered is experimental parameter for SW notifications
-                    const notifications = await registration.getNotifications({
+                    const notifications = await (registration as any).getNotifications({
                         includeTriggered: true,
                     });
                     const tagsToCancel = [`${id}-7days`, `${id}-1day`];
