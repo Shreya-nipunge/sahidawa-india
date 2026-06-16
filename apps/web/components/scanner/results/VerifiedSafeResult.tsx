@@ -7,6 +7,7 @@ import { ResultActions } from "./ResultActions";
 import { formatExpiryForBadge } from "@/lib/medicineDateUtils";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { ExpandableDetails } from "../../ExpandableDetails";
 
 export function VerifiedSafeResult({
     medicine,
@@ -130,6 +131,7 @@ export function VerifiedSafeResult({
                         </p>
                     </div>
                 )}
+                <ExpandableDetails medicine={medicine} />
 
                 {medicine.id && (
                     <Link
