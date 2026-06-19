@@ -120,6 +120,11 @@ if (process.env.NODE_ENV !== "test" && process.env.NODE_ENV !== "development") {
 app.get("/api/csrf-token", (req: Request, res: Response) => {
     if (!req.cookies?.[ANON_SESSION_COOKIE] && !req.cookies?.access_token) {
         const anonId = crypto.randomUUID();
+
+        // FIX: Mutate req.cookies so generateToken binds to this exact ID
+        if (!req.cookies) req.cookies = {};
+        req.cookies[ANON_SESSION_COOKIE] = anonId;
+
         res.cookie(ANON_SESSION_COOKIE, anonId, {
             httpOnly: true,
             sameSite: "strict",

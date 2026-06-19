@@ -29,7 +29,10 @@ export async function refreshCsrfToken(): Promise<string> {
 
 async function fetchWithCsrf<T>(
     url: string,
-    options: Omit<import("./apiWithRetry").FetchOptions, "headers"> & { headers?: Record<string, string> }
+    options: Omit<import("./apiWithRetry").FetchOptions, "headers"> & {
+        headers?: Record<string, string>;
+    },
+    ignore404: boolean = false
 ): Promise<T> {
     const doFetch = async (token: string) => {
         return fetchWithRetry(url, {
@@ -50,8 +53,8 @@ async function fetchWithCsrf<T>(
         res = await doFetch(freshToken);
     }
 
-    if (!res.ok && res.status !== 404) {
-        const body = await res.json().catch(() => ({})) as { error?: string };
+    if (!res.ok && !(ignore404 && res.status === 404)) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error ?? "Server error occurred. Please retry.");
     }
 
@@ -329,12 +332,16 @@ export async function verifyMedicine(
             console.warn("ML service unavailable, falling back to Node API");
         }
     }
-    return fetchWithCsrf<VerifyResult>(`${API_BASE}/api/verify`, {
-        method: "POST",
-        body: JSON.stringify({ batchNumber }),
-        timeout: 10000,
-        signal,
-    });
+    return fetchWithCsrf<VerifyResult>(
+        `${API_BASE}/api/verify`,
+        {
+            method: "POST",
+            body: JSON.stringify({ batchNumber }),
+            timeout: 10000,
+            signal,
+        },
+        true
+    );
 }
 
 export type FuzzyMatch = {
@@ -355,12 +362,16 @@ export async function verifyMedicineByBrand(
     brandName: string,
     signal?: AbortSignal
 ): Promise<VerifyResult> {
-    return fetchWithCsrf<VerifyResult>(`${API_BASE}/api/v1/scan/verify-brand`, {
-        method: "POST",
-        body: JSON.stringify({ brandName }),
-        timeout: 10000,
-        signal,
-    });
+    return fetchWithCsrf<VerifyResult>(
+        `${API_BASE}/api/v1/scan/verify-brand`,
+        {
+            method: "POST",
+            body: JSON.stringify({ brandName }),
+            timeout: 10000,
+            signal,
+        },
+        true
+    );
 }
 
 export type LasaMatchType = "sound-alike" | "look-alike";
