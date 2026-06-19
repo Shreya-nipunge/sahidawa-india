@@ -60,6 +60,15 @@
     },
     "Scan": {
         "calculateSavings": "Calculate Savings",
+        "scanMedicine": "Scan Medicine",
+        "positionBarcode": "Position the Barcode",
+        "enterBatchNumber": "Enter batch number",
+        "verify": "Verify",
+        "batchNumberHelp": "Enter the batch number from the medicine strip, or upload a photo from your gallery.",
+        "viewHistory": "View history",
+        "stopScanner": "Stop Scanner",
+        "scanBarcode": "Scan Barcode",
+        "uploadPhoto": "Upload Photo",
         "share": {
             "button": "Share Result",
             "title": "SahiDawa Medicine Verification Result",

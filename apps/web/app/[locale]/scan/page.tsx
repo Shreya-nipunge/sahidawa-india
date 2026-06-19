@@ -474,8 +474,7 @@ export default function ScanPage() {
                         className="flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-5 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Search size={18} />
-                        {isOffline ? tScan("offline") : tScan("verify")}
-                        {isOffline ? tScan("offlineVerify") : "Verify"}
+                        {isOffline ? tScan("offlineVerify") : tScan("verify")}
                     </button>
                 </form>
 
@@ -499,7 +498,7 @@ export default function ScanPage() {
                         }`}
                     >
                         <ScanLine size={18} />
-                        {isCameraActive ? tScan("stopScanner") : tScan("ScanBarcode")}
+                        {isCameraActive ? tScan("stopScanner") : tScan("scanBarcode")}
                     </button>
                     <label
                         htmlFor="medicine-upload"
