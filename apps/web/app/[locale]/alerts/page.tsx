@@ -24,6 +24,7 @@ import { API_BASE } from "@/lib/api";
 import BackToTopButton from "@/app/[locale]/components/BackToTopButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { useInView } from "react-intersection-observer";
 
 function formatRelativeTime(dateString: string | null): string {
     if (!dateString) return "Recent";
@@ -51,6 +52,7 @@ export default function FullAlertsLogPage() {
     const t = useTranslations("Alerts");
     const [allAlerts, setAllAlerts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(false);
 
     // Filters
@@ -58,41 +60,75 @@ export default function FullAlertsLogPage() {
     const [regionSearch, setRegionSearch] = useState("");
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
 
     // Accordion active expanded state
     const [expandedAlertId, setExpandedAlertId] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchAlerts = async () => {
-            setLoading(true);
-            setError(false);
-            try {
-                let url = `${API_BASE}/api/v1/alerts?page=${page}&limit=50`;
-                if (brandSearch) url += `&brand=${encodeURIComponent(brandSearch)}`;
-                if (regionSearch) url += `&region=${encodeURIComponent(regionSearch)}`;
+    // Intersection Observer for infinite scroll
+    const [inViewRef, inView] = useInView({
+        triggerOnce: false,
+        threshold: 0.1,
+        rootMargin: "0px 0px 100px 0px",
+    });
 
-                const res = await fetch(url);
-                if (!res.ok) {
-                    setError(true);
-                    setLoading(false);
-                    return;
-                }
-                const data = await res.json();
-                setAllAlerts(data.data || []);
-                setTotalCount(data.totalCount || 0);
-            } catch {
+    useEffect(() => {
+        if (inView && !loadingMore && hasMore && !loading) {
+            setPage((prev) => prev + 1);
+        }
+    }, [inView, loadingMore, hasMore, loading]);
+
+    const fetchAlerts = async (pageNum: number, append = false) => {
+        try {
+            let url = `${API_BASE}/api/v1/alerts?page=${pageNum}&limit=50`;
+            if (brandSearch) url += `&brand=${encodeURIComponent(brandSearch)}`;
+            if (regionSearch) url += `&region=${encodeURIComponent(regionSearch)}`;
+
+            const res = await fetch(url);
+            if (!res.ok) {
                 setError(true);
-            } finally {
-                setLoading(false);
+                return;
             }
+            const data = await res.json();
+
+            if (append) {
+                setAllAlerts((prev) => [...prev, ...(data.data || [])]);
+            } else {
+                setAllAlerts(data.data || []);
+            }
+
+            setTotalCount(data.totalCount || 0);
+            setHasMore(pageNum * 50 < (data.totalCount || 0));
+        } catch {
+            setError(true);
+        }
+    };
+
+    // Initial load and when filters change
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            setPage(1);
+            setHasMore(true);
+            await fetchAlerts(1, false);
+            setLoading(false);
         };
 
-        const timer = setTimeout(() => {
-            fetchAlerts();
-        }, 400);
-
+        const timer = setTimeout(loadData, 400);
         return () => clearTimeout(timer);
-    }, [page, brandSearch, regionSearch]);
+    }, [brandSearch, regionSearch]);
+
+    // Load more when page changes (triggered by intersection observer)
+    useEffect(() => {
+        if (page > 1 && !loading) {
+            const loadMore = async () => {
+                setLoadingMore(true);
+                await fetchAlerts(page, true);
+                setLoadingMore(false);
+            };
+            loadMore();
+        }
+    }, [page]);
 
     const criticalCount = allAlerts.filter(
         (alert) =>
@@ -269,6 +305,7 @@ export default function FullAlertsLogPage() {
                                 onChange={(e) => {
                                     setBrandSearch(e.target.value);
                                     setPage(1);
+                                    setHasMore(true);
                                 }}
                                 className="block w-full rounded-2xl border border-(--color-border-muted) bg-(--color-surface-muted)/40 p-3 pl-11 text-sm text-(--color-text-primary) placeholder-(--color-text-muted) shadow-inner transition-all focus:border-emerald-500/80 focus:bg-white focus:ring-2 focus:ring-emerald-500/10 focus:outline-hidden dark:focus:bg-slate-900/50"
                             />
@@ -284,6 +321,7 @@ export default function FullAlertsLogPage() {
                                 onChange={(e) => {
                                     setRegionSearch(e.target.value);
                                     setPage(1);
+                                    setHasMore(true);
                                 }}
                                 className="block w-full rounded-2xl border border-(--color-border-muted) bg-(--color-surface-muted)/40 p-3 pl-11 text-sm text-(--color-text-primary) placeholder-(--color-text-muted) shadow-inner transition-all focus:border-emerald-500/80 focus:bg-white focus:ring-2 focus:ring-emerald-500/10 focus:outline-hidden dark:focus:bg-slate-900/50"
                             />
@@ -302,7 +340,7 @@ export default function FullAlertsLogPage() {
 
                 {/* Alerts Feed */}
                 <div role="feed" aria-busy={loading} className="space-y-4">
-                    {loading ? (
+                    {loading && allAlerts.length === 0 ? (
                         <div className="rounded-3xl border border-(--color-border-muted) bg-(--color-surface-page) py-20 text-center font-bold text-(--color-text-muted) shadow-inner">
                             <span className="mr-2 inline-block h-6 w-6 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent align-middle"></span>
                             {t("loading")}
@@ -630,37 +668,35 @@ export default function FullAlertsLogPage() {
                     )}
                 </div>
 
-                {/* Pagination Controls */}
-                <div className="mt-8 flex items-center justify-center gap-4">
-                    <button
-                        disabled={page === 1}
-                        onClick={() => {
-                            setPage((p) => p - 1);
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className="rounded-2xl border border-(--color-border-muted) bg-(--color-surface-page) px-5 py-2.5 text-sm font-extrabold text-(--color-text-primary) shadow-sm transition-all hover:bg-(--color-surface-muted) active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                        {t("previous")}
-                    </button>
-                    <span className="text-xs font-bold text-(--color-text-muted)">
-                        Page{" "}
-                        <span className="font-extrabold text-(--color-text-primary)">{page}</span>{" "}
-                        of{" "}
-                        <span className="font-extrabold text-(--color-text-primary)">
-                            {Math.max(1, Math.ceil(totalCount / 50))}
-                        </span>
-                    </span>
-                    <button
-                        disabled={page * 50 >= totalCount}
-                        onClick={() => {
-                            setPage((p) => p + 1);
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className="rounded-2xl border border-(--color-border-muted) bg-(--color-surface-page) px-5 py-2.5 text-sm font-extrabold text-(--color-text-primary) shadow-sm transition-all hover:bg-(--color-surface-muted) active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                        {t("next")}
-                    </button>
-                </div>
+                {/* Infinite Scroll Load More Trigger */}
+                {!loading && allAlerts.length > 0 && (
+                    <div className="mt-8">
+                        {loadingMore && (
+                            <div className="flex justify-center py-4">
+                                <div className="flex items-center gap-3 text-sm font-semibold text-(--color-text-muted)">
+                                    <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></span>
+                                    Loading more alerts...
+                                </div>
+                            </div>
+                        )}
+                        {hasMore && !loadingMore && (
+                            <div
+                                ref={inViewRef}
+                                className="w-full rounded-2xl border border-dashed border-(--color-border-muted) bg-(--color-surface-muted)/30 py-4 text-center text-sm font-semibold text-(--color-text-muted) transition-all hover:bg-(--color-surface-muted)"
+                            >
+                                <span className="inline-flex items-center gap-2">
+                                    <span className="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
+                                    Scroll for more alerts
+                                </span>
+                            </div>
+                        )}
+                        {!hasMore && totalCount > 0 && (
+                            <div className="text-center text-sm font-semibold text-(--color-text-muted)">
+                                ✅ You've seen all {totalCount} safety alerts
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
             <BackToTopButton />
         </>
