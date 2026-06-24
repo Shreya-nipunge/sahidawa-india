@@ -185,6 +185,76 @@ describe("broadcastDistrictAlerts", () => {
 
         expect(smsService.send).not.toHaveBeenCalled();
     });
+
+    it("matches subscribers via .ilike('district', ...) when the alert is keyed on a real administrative district (#2307)", async () => {
+        // Regression for #2307: before the fix, district_alerts rows were
+        // keyed on city name (e.g. "Pune") because reports.ts aliased
+        // district -> city. Subscribers register with their real district
+        // name (e.g. "Pune District"), so the .ilike("district", alert.district)
+        // match below would never fire. This test asserts the query is
+        // built with the alert's district value and subscribers matching
+        // that exact district string are notified.
+        let ilikeArgs: unknown[] = [];
+
+        (mockedSupabase.from as jest.Mock).mockImplementation((table: string) => {
+            if (table === "district_alerts") {
+                return {
+                    select: jest.fn().mockReturnValue({
+                        eq: jest.fn().mockReturnValue({
+                            eq: jest.fn().mockResolvedValue({
+                                data: [
+                                    {
+                                        id: "alert-1",
+                                        district: "Pune District",
+                                        medicine_name: "Aspirin 500mg",
+                                        alert_level: "medium",
+                                        is_active: true,
+                                        broadcasted: false,
+                                    },
+                                ],
+                                error: null,
+                            }),
+                        }),
+                    }),
+                    update: jest.fn().mockReturnValue({
+                        eq: jest.fn().mockResolvedValue({ data: null, error: null }),
+                    }),
+                };
+            }
+            if (table === "notification_subscribers") {
+                return {
+                    select: jest.fn().mockReturnValue({
+                        eq: jest.fn().mockReturnValue({
+                            ilike: jest.fn().mockImplementation((...args) => {
+                                ilikeArgs = args;
+                                return {
+                                    range: jest.fn().mockResolvedValue({
+                                        data: [
+                                            {
+                                                id: "sub-1",
+                                                phone: "+910000000001",
+                                                language: "en",
+                                                channels: ["sms"],
+                                                district: "Pune District",
+                                                is_active: true,
+                                            },
+                                        ],
+                                        error: null,
+                                    }),
+                                };
+                            }),
+                        }),
+                    }),
+                };
+            }
+            return {};
+        });
+
+        await broadcastDistrictAlerts();
+
+        expect(ilikeArgs).toEqual(["district", "Pune District"]);
+        expect(smsService.send).toHaveBeenCalledTimes(1);
+    });
 });
 
 describe("broadcastExpiryAlerts", () => {
