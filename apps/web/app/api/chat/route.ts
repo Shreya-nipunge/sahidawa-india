@@ -191,10 +191,9 @@ export async function POST(req: Request) {
         const MAX_MESSAGE_CHARS = 2000;
         const MAX_TOKENS = 3000; // Safe limit for standard context + response
         const recentMessages = messages.slice(-MAX_MESSAGES);
-        const { trimmedMessages, droppedMessages } = trimHistoryByTokens(
-            recentMessages,
-            MAX_TOKENS
-        );
+        const history = trimHistoryByTokens(recentMessages, MAX_TOKENS);
+        let trimmedMessages = history.trimmedMessages;
+        const droppedMessages = history.droppedMessages;
 
         for (const msg of trimmedMessages) {
             const text = msg.text || msg.content || "";
