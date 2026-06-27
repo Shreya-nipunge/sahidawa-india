@@ -9,6 +9,7 @@ import { validateMlServiceConfig, getMlServiceUrl } from "./config/mlService";
 import { redisClient } from "./utils/redis";
 import cookieParser from "cookie-parser";
 import { doubleCsrf } from "csrf-csrf";
+import { httpsRedirect } from "./middleware/httpsRedirect";
 import mapRouter from "./routes/map";
 import medicineSchedulesRouter from "./routes/medicineSchedules";
 
@@ -76,6 +77,10 @@ import { errorHandler } from "./middleware/errorHandler";
 // ── Application Initialization ─────────────────────────────────────────────
 const app: Express = express();
 app.set("trust proxy", 1); // Trust first proxy (Nginx) — fixes req.ip for rate limiters
+
+// ── Security: Enforce HTTPS in production ──────────────────────────────────
+// Redirects all HTTP requests to HTTPS (301) to protect sensitive healthcare data
+app.use(httpsRedirect);
 
 app.use(compression());
 app.use(cors(createCorsOptions()));
