@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/src/lib/supabase";
-import { getAdminRoleFromSession } from "@/src/lib/auth";
+import { createServerClient } from "@supabase/ssr";
+import { getSupabaseUrl, getSupabaseAnonKey } from "@/lib/env";
+import { cookies } from "next/headers";
+import { getAdminRoleFromSession } from "@/lib/adminAuth";
 import { Redis } from "@upstash/redis";
 
 /**
@@ -14,28 +16,37 @@ import { Redis } from "@upstash/redis";
  */
 
 const hasRedisCredentials =
-    Boolean(process.env.UPSTASH_REDIS_REST_URL) &&
-    Boolean(process.env.UPSTASH_REDIS_REST_TOKEN);
+    Boolean(process.env.UPSTASH_REDIS_REST_URL) && Boolean(process.env.UPSTASH_REDIS_REST_TOKEN);
 
-const redis = hasRedisCredentials
-    ? Redis.fromEnv()
-    : null;
+const redis = hasRedisCredentials ? Redis.fromEnv() : null;
 
 export async function GET(request: NextRequest) {
     try {
         // Security: Verify admin session
-        const supabase = createServerClient();
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const cookieStore = await cookies();
+        const supabase = createServerClient(getSupabaseUrl(), getSupabaseAnonKey(), {
+            cookies: {
+                getAll() {
+                    return cookieStore.getAll();
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        cookieStore.set({ name, value, ...options });
+                    });
+                },
+            },
+        });
+        const {
+            data: { session },
+            error: sessionError,
+        } = await supabase.auth.getSession();
 
         if (sessionError || !session) {
-            return NextResponse.json(
-                { error: "Unauthorized: Please sign in" },
-                { status: 401 }
-            );
+            return NextResponse.json({ error: "Unauthorized: Please sign in" }, { status: 401 });
         }
 
         // Check admin role
-        const adminRole = await getAdminRoleFromSession(session.user.id);
+        const adminRole = getAdminRoleFromSession(session);
         if (adminRole !== "admin" && adminRole !== "moderator") {
             return NextResponse.json(
                 { error: "Forbidden: Admin access required" },
@@ -132,9 +143,6 @@ export async function GET(request: NextRequest) {
         });
     } catch (err) {
         console.error("Failed to fetch rate limit metrics:", err);
-        return NextResponse.json(
-            { error: "Failed to fetch rate limit metrics" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to fetch rate limit metrics" }, { status: 500 });
     }
 }
