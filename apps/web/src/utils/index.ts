@@ -1,2 +1,2 @@
 export * from './syncConfig';
-export * from './utils/networkSync';
+export * from './networkSync';
