@@ -5,7 +5,7 @@ import { Pill, Plus, Bookmark, Trash2, AlertTriangle, RefreshCw } from "lucide-r
 import { Badge } from "@/components/ui/Badge";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { RequestVerificationModal } from "@/components/RequestVerificationModal";
-import { getApiBaseUrl } from "@/lib/env";
+import { API_BASE } from "@/lib/api";
 
 interface TrackedMedicine {
     id: string;
@@ -85,13 +85,10 @@ export default function MyMedicinesPage() {
             setErrorMessage(null);
 
             try {
-                const apiBaseUrl = getApiBaseUrl();
-                const res = await fetch(`${apiBaseUrl}/api/v1/medicines/tracked`);
+                const res = await fetch(`${API_BASE}/api/v1/medicines/tracked`);
 
                 if (!res.ok) {
-                    throw new Error(
-                        `Request failed with status ${res.status}. Please try again.`
-                    );
+                    throw new Error(`Request failed with status ${res.status}. Please try again.`);
                 }
 
                 const data = await res.json();
@@ -135,7 +132,9 @@ export default function MyMedicinesPage() {
         if (!confirmDialog.bookmarkName) return;
         setIsDeleting(true);
         try {
-            const updated = savedMedicines.filter((item) => item.alternative_name !== confirmDialog.bookmarkName);
+            const updated = savedMedicines.filter(
+                (item) => item.alternative_name !== confirmDialog.bookmarkName
+            );
             localStorage.setItem("medicine-bookmarks", JSON.stringify(updated));
             setSavedMedicines(updated);
         } catch (error) {
